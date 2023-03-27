@@ -11,3 +11,6 @@
 ## やったことなど
 - https://dumps.wikimedia.org/jawiki/latest/
   - これのjawiki-latest-all-titles-in-ns0.gzをダウンロード
+
+- https://qiita.com/Qiitaman/items/d19da03d04805b92cc6c
+  - 漢字→ひらがなに変換
