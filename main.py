@@ -4,7 +4,7 @@ import bisect
 
 
 class App:
-    def __init__(self, test=False) -> None:
+    def __init__(self, test=False, is_rhyme_prepared=True) -> None:
         self.kks = pykakasi.kakasi()
         self.alp = set(
             [
@@ -13,11 +13,20 @@ class App:
                 " ",
             ]
         )
+        if is_rhyme_prepared:
+            self.vowels = (
+                open("./files/vowels.txt", "r", encoding="utf-8").read().splitlines()
+            )
+            self.lines_original = (
+                open("./files/original.txt", "r", encoding="utf-8").read().splitlines()
+            )
+            return
+
         self.ng = set()
         self.cnt = 0
         self.vowels = []
-        file_path_test = "./first10.txt"
-        file_path = "./word_file"
+        file_path_test = ".files/test.txt"
+        file_path = ".files/jawiki-latest-all-titles-in-ns0"
         file_path = file_path_test if test else file_path
         data = open(file_path, "r", encoding="utf-8")
         self.lines = data.read().splitlines()
@@ -40,12 +49,12 @@ class App:
         if not test:
             self.write2file("./files/romaji.txt", self.lines_romaji)
             self.write2file("./files/ng.txt", self.ng)
-            self.write2file("./files/rhyme.txt", self.vowels)
+            self.write2file("./files/vowels.txt", self.vowels)
             self.write2file("./files/original.txt", self.lines_original)
         else:
             self.write2file("./files/romaji_test.txt", self.lines_romaji)
             self.write2file("./files/ng_test.txt", self.ng)
-            self.write2file("./files/rhyme_test.txt", self.vowels)
+            self.write2file("./files/vowels_test.txt", self.vowels)
             self.write2file("./files/original_test.txt", self.lines_original)
 
     def get_romaji(self, text):
@@ -53,8 +62,6 @@ class App:
         return " ".join([item["hepburn"] for item in result])
 
     def is_valid_text(self, romaji, original):
-        # 龜みたいな，一般的でない漢字はローマ字に変換すると空文字になるため
-        # 김윤석は日本語じゃないから，空白になる
         if romaji == "" or romaji[0] == " ":
             return False
         for t in original:
@@ -89,15 +96,22 @@ class App:
         return "".join(res)
 
     def search(self, text):
-        left = bisect.bisect_left(self.vowels, text)
-        right = bisect.bisect_right(self.vowels, text)
-        return self.lines_original[left], self.lines_original[right]
+        romaji = self.get_vowels(self.get_romaji(text))
+        print(text, romaji)
+        left = bisect.bisect_left(self.vowels, romaji)  # 含む
+        right = bisect.bisect_right(self.vowels, romaji)  # 含まない
+        return self.lines_original[left:right]
 
 
 start = time.time()
-app = App()
+app = App(is_rhyme_prepared=True)
 # print(app.lines_romaji)
 # print(set(app.ng))
 end = time.time()
 print(f"time:{end - start}")
-print(app.search("iui"))
+print(*app.search("合気道部"), sep="\n")
+
+# Todo
+# rhyme.txtが存在している場合は，巨大元ファイルを読み込まないで，rhyme.txtを読み込む
+#
+# searchで範囲取得後，ユーザーが指定した数分（ランダム）で取得する
