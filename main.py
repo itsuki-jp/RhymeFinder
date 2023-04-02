@@ -104,7 +104,7 @@ class App:
 
 
 start = time.time()
-app = App(is_rhyme_prepared=False)
+app = App(is_rhyme_prepared=True)
 # print(app.lines_romaji)
 # print(set(app.ng))
 end = time.time()
