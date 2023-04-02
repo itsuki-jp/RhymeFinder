@@ -25,8 +25,8 @@ class App:
         self.ng = set()
         self.cnt = 0
         self.vowels = []
-        file_path_test = ".files/test.txt"
-        file_path = ".files/jawiki-latest-all-titles-in-ns0"
+        file_path_test = "./files/test.txt"
+        file_path = "./files/jawiki-latest-all-titles-in-ns0"
         file_path = file_path_test if test else file_path
         data = open(file_path, "r", encoding="utf-8")
         self.lines = data.read().splitlines()
@@ -43,9 +43,9 @@ class App:
             self.lines_original.append(line)
             self.vowels.append(self.get_vowels(romaji))
         data.close()
-        zip_lists = zip(self.vowels, self.lines_original)
+        zip_lists = zip(self.vowels, self.lines_original, self.lines_romaji)
         zip_sorted = sorted(zip_lists)
-        self.vowels, self.lines_original = zip(*zip_sorted)
+        self.vowels, self.lines_original, self.lines_romaji = zip(*zip_sorted)
         if not test:
             self.write2file("./files/romaji.txt", self.lines_romaji)
             self.write2file("./files/ng.txt", self.ng)
@@ -104,12 +104,13 @@ class App:
 
 
 start = time.time()
-app = App(is_rhyme_prepared=True)
+app = App(is_rhyme_prepared=False)
 # print(app.lines_romaji)
 # print(set(app.ng))
 end = time.time()
 print(f"time:{end - start}")
-print(*app.search("合気道部"), sep="\n")
+text = input()
+print(*app.search(text), sep="\n")
 
 # Todo
 # rhyme.txtが存在している場合は，巨大元ファイルを読み込まないで，rhyme.txtを読み込む
