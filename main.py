@@ -41,7 +41,7 @@ class App:
                 continue
             self.lines_romaji.append(romaji)
             self.lines_original.append(line)
-            self.vowels.append(self.get_vowels(romaji))
+            self.vowels.append(self.vowel_temp)
         data.close()
         zip_lists = zip(self.vowels, self.lines_original, self.lines_romaji)
         zip_sorted = sorted(zip_lists)
@@ -71,6 +71,10 @@ class App:
             if t not in self.alp:
                 self.ng.add(t)
                 return False
+        vowel = self.get_vowels(romaji)
+        if len(vowel) == 0:
+            return False
+        self.vowel_temp = vowel
         return True
 
     def write2file(self, path, texts):
@@ -104,7 +108,7 @@ class App:
 
 
 start = time.time()
-app = App(is_rhyme_prepared=True)
+app = App(test=False, is_rhyme_prepared=False)
 # print(app.lines_romaji)
 # print(set(app.ng))
 end = time.time()
